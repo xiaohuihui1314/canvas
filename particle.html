@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    body{
+        background-color: #2b2b2b;
+    }
+    canvas {
+        display: block;
+        margin: 100px auto;
+        border: 1px solid #ccc;
+    }
+</style>
+<body>
+<canvas id="canvas" width="800" height="500"></canvas>
+<button type="button" id="btn">点击</button>
+<script>
+    var canvas = document.getElementById("canvas"),
+        btn = document.getElementById("btn"),
+        cxt = canvas.getContext("2d"),
+        W = canvas.width,
+        H = canvas.height,
+        gridX = 7,
+        gridY = 7,
+        colors = [
+            '#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5',
+            '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50',
+            '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800',
+            '#FF5722'
+        ];
+
+    cxt.textAlign = "center";
+    cxt.font = "200px arial";
+    cxt.fillText("IT", 400, 300);
+    btn.onclick = function () {
+        var imgData = cxt.getImageData(0, 0, W, H),
+            data = imgData.data;
+        var Ut32Arr = new Uint32Array(data.buffer);
+        var xy = [];
+        for (var i = 0; i < H; i += gridY) {
+            for (var j = 0; j < W; j += gridX) {
+                if (Ut32Arr[i * W + j]) {
+                    var Par = new Particle(j, i);
+                    xy.push(Par);
+
+                }
+            }
+        }
+        cxt.clearRect(0, 0, W, H);
+        function Particle(x, y) {
+            this.x = x;
+            this.y = y;
+            this.radius = 1.1;
+            this.dying = false;
+            this.randomInt = function (min, max) {
+                return min + Math.random() * (max - min + 1);
+            };
+            this.futurRadius = this.randomInt(1,3);
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.init = function () {
+//                this.radius=this.randomInt(1,5);
+                if (this.radius < this.futurRadius && this.dying == false) {
+                    this.radius += 0.1;
+                } else {
+                    this.dying = true;
+                }
+                if (this.dying) {
+                    this.radius -= 0.1;
+                }
+                cxt.fillStyle = this.color;
+                cxt.beginPath();
+                cxt.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
+                cxt.closePath();
+                cxt.fill();
+                if (this.radius < 1) {
+                    this.dying = false;
+                }
+            }
+        }
+
+        (function drawFrame() {
+            window.requestAnimationFrame(drawFrame);
+            cxt.clearRect(0, 0, W, H);
+
+            for (var i = 0; i < xy.length; i++) {
+                xy[i].init();
+            }
+        }())
+
+    }
+</script>
+</body>
+</html>

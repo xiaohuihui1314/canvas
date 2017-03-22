@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    canvas, img {
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+<body>
+<canvas id="canvas" width="623" height="832"></canvas>
+<button type="button" id="btn">点击</button>
+<script>
+    var canvas = document.getElementById("canvas"),
+        btn = document.getElementById("btn"),
+        ctx = canvas.getContext("2d"),
+        W = canvas.width,
+        H = canvas.height;
+    var img = new Image();
+    img.src = "1.png";
+    img.onload = function () {
+        ctx.drawImage(img, 0, 0, W, H);
+    };
+    btn.onclick = function () {
+        var imgData = ctx.getImageData(0, 0, W/2, H),
+            data = imgData.data;
+        console.log(data);
+        for (var i = 0; i < H ; i++) {
+            for (var j = 0; j < W ; j++) {
+                var x = 4 * (i * W + j),
+                    r = data[x],
+                    g = data[x + 1],
+                    b = data[x + 2];
+                data[x] = 255 - r;
+           /*     data[x + 1] = 255 - g;
+                data[x + 2] = 255 - b;*/
+                data[x + 3] = Math.random()*255;
+            }
+        }
+        ctx.putImageData(imgData, 0, 0, 0, 0,  W, H );
+    }
+</script>
+</body>
+</html>

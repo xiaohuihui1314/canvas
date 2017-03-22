@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1 id="showMsg"></h1>
+<section id="imgWrap">
+    <div class="img-wrap">
+        <img src="http://img.daimg.com/uploads/allimg/170205/3-1F205225F8.jpg">
+    </div>
+</section>
+<button type="button" id="btn">显示</button>
+<script>
+    var d = document;
+    var msgBox = d.getElementById("showMsg");
+    var btn = d.getElementById("btn");
+    var imgWrap = d.getElementById("imgWrap");
+
+    var imgs = d.getElementsByTagName("img")[0];
+    var time1 = null, time2 = null, time3 = null;
+    if (d.addEventListener) {
+        console.log("start");
+        d.addEventListener("DOMContentLoaded", domReady, false);
+    }
+    /*else{
+     IEContentLoaded(domReady);
+     }*/
+    function domReady() {
+        console.log("1111111111111");
+        msgBox.innerHTML += "dom已加载！<br>";
+        time1 = new Date().getTime();
+        msgBox.innerHTML += "时间戳：" + time1 + "<br>";
+    }
+    imgs.onload = function () {
+        msgBox.innerHTML += "imgs已加载！<br>";
+        time3 = new Date().getTime();
+        msgBox.innerHTML += "时间戳：" + time3 + "<br>";
+        msgBox.innerHTML += "imgs加载：" + (time3 - time1) + "ms<br>";
+        console.log("加载完毕");
+    };
+
+
+    //兼容IE的domReady
+    function IEContentLoaded(fn) {
+        var done = false,
+            init = function () {
+                if (!done) {
+                    done = true;
+                    fn();
+                }
+            };
+        (function () {
+            try {
+                d.documentElement.doScroll('left');
+            } catch (e) {
+                setTimeout(arguments.callee, 50);
+                return;
+            }
+            init();
+        })();
+        d.onreadystatechange = function () {
+            msgBox.innerHTML += "加载状态：" + d.readyState + "<br>";
+            if (d.readyState == 'complete') {
+                d.onreadystatechange = null;
+            }
+        }
+    }
+    window.onload = function () {
+        console.log("222222222");
+        msgBox.innerHTML += "onload已加载！<br>";
+        time2 = new Date().getTime();
+        msgBox.innerHTML += "时间戳：" + time2 + "<br>";
+        msgBox.innerHTML += "domReady比onload快：" + (time2 - time1) + "ms<br>";
+    }
+</script>
+</body>
+</html>

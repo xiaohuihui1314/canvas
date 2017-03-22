@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    #video {
+        display: none;
+    }
+
+    canvas {
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+<body>
+<video id="video" autoplay>
+    <source src="./rabbit.mp4" type="video/mp4">
+</video>
+<canvas id="canvas" width="623" height="832"></canvas>
+<button type="button" id="btn">点击</button>
+<script>
+    var canvas = document.getElementById("canvas"),
+        video = document.getElementById("video"),
+        btn = document.getElementById("btn"),
+        cxt = canvas.getContext("2d"),
+        W = canvas.width,
+        H = canvas.height;
+    video.addEventListener('play', function () {
+        var i = window.setInterval(function () {
+            cxt.drawImage(video, 0, 0, W, H);
+            var imgData = cxt.getImageData(0, 0, W, H),
+                data = imgData.data;
+            cxt.clearRect(0, 0, W, H);
+            var pixelX = 50;
+            var pixelY = 50;
+            cxt.clearRect(0, 0, W, H);
+
+            for (var i = 0; i < pixelX; i++) {
+                for (var j = 0; j < pixelY; j++) {
+                    var x = (j * W / pixelX) + (W / pixelX / 2);
+                    var y = (i * H / pixelY) + (H / pixelY / 2);
+                    var pos = (Math.floor(y) * (W * 4)) + (Math.floor(x) * 4);
+                    var r = data[pos],
+                        g = data[pos + 1],
+                        b = data[pos + 2],
+                        a = data[pos + 2];
+                    cxt.fillStyle = "rgba(" + r + "," + g + "," + b + "," + a + ")";
+                    cxt.beginPath();
+                    cxt.arc(x, y, W / pixelX / 2, 0, Math.PI * 2, true);
+                    cxt.closePath();
+                    cxt.fill();
+
+                }
+            }
+        }, 16);
+    }, false);
+
+</script>
+</body>
+</html>

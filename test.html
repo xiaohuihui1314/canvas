@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    body {
+        background: #000;
+        margin: 0;
+    }
+</style>
+<body>
+<canvas id="canvas" width="1000" height="1000">Your browser does not support the HTML5 canvas tag.</canvas>
+</body>
+<script>
+    var canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+    ParticleArray = [];
+    var timeOut =  setInterval(draw,30);
+    setTimeout(function () {
+        clearInterval(timeOut)
+    }, 500000);
+    var hue=120;
+    function draw() {
+        var Particle = {
+            x: 100,
+            y: 100,
+            angle: random(0, Math.PI * 2),
+            speed: random(1, 10),
+            size:10,
+            hue :random
+            ( hue - 40, hue + 40 ),
+            brightness : random( 50, 80 ),
+            gravity:1,
+            friction : 0.95
+
+        };
+        ParticleArray.push(Particle);
+        ctx.clearRect(0, 0, 1000, 1000);
+
+        for (var i = 0; i < ParticleArray.length; i++) {
+            Particle = ParticleArray[i];
+
+            ctx.fillStyle = 'hsl(' + Particle.hue + ', 100%, ' + Particle.brightness + '%)';
+//            ctx.fillRect(Particle.x, Particle.y, Particle.size, Particle.size);
+            ctx.beginPath();
+            ctx.arc(Particle.x, Particle.y, 1, 0, Math.PI * 2, true);
+            ctx.closePath();
+            ctx.fill();
+            Particle.speed*=Particle.friction;
+            Particle.x += Math.cos(Particle.angle) * Particle.speed;
+            Particle.y += Math.sin(Particle.angle) * Particle.speed+Particle.gravity;
+            Particle.size*=0.99;
+        }
+        hue+=3;
+    }
+
+
+    function random(min, max) {
+        return Math.random()
+            * (max - min) + min;
+    }
+    var mx,my;
+    canvas.addEventListener( 'mousemove', function( e ) {
+        mx = e.pageX - canvas.offsetLeft;
+        my = e.pageY - canvas.offsetTop;
+    });
+</script>
+</html>

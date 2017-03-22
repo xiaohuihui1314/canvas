@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>canvas实现圆周运动</title>
+</head>
+<style>
+    body{
+        background-color: #2b2b2b;
+    }
+    #canvas{
+        border: 1px solid #fff;
+    }
+</style>
+<body>
+<canvas id="canvas">你的浏览器不支持canvas，请跟换其他浏览器试一试</canvas>
+<script type="text/javascript">
+
+    window.onload=function(){
+        var canvas=document.getElementById('canvas');
+        canvas.height=728;
+        canvas.width=1024;
+        var context=canvas.getContext('2d');
+        drawNotChange(context);
+        context.fillStyle='blue';
+        context.beginPath();
+        context.arc(500,550,5,0,2*Math.PI,true);
+        context.closePath();
+        context.fill();
+//        setInterval(function(){
+//            run(context);
+//        }, 50);
+        run(context);
+    };
+    var time=1;//定义运动的执行次数
+    ParticleArray = [];
+    var start = {
+        X: 500,
+        Y: 550
+    };
+    function run(cxt){
+        var hue=120;
+        function draw() {
+            var Particle = {
+                x: 100,
+                y: 100,
+                angle: random(0, Math.PI * 2),
+                speed: random(1, 10),
+                size:10,
+                hue :random
+                ( hue - 40, hue + 40 ),
+                brightness : random( 50, 80 ),
+                gravity:1,
+                friction : 0.95
+
+            }
+            ParticleArray.push(Particle);
+            cxt.clearRect(0, 0, 1000, 1000);
+
+            for (var i = 0; i < ParticleArray.length; i++) {
+                Particle = ParticleArray[i];
+
+                cxt.fillStyle = 'hsl(' + Particle.hue + ', 100%, ' + Particle.brightness + '%)';
+//            ctx.fillRect(Particle.x, Particle.y, Particle.size, Particle.size);
+                cxt.beginPath();
+                cxt.arc(Particle.x, Particle.y, 5, 0, Math.PI * 2, true);
+                cxt.closePath();
+                cxt.fill();
+                Particle.speed*=Particle.friction;
+                Particle.x += Math.cos(Particle.angle) * Particle.speed;
+                Particle.y += Math.sin(Particle.angle) * Particle.speed+Particle.gravity;
+                Particle.size*=0.99;
+            }
+            hue+=3;
+        }
+        draw();
+        function random(min, max) {
+            return Math.random()
+                * (max - min) + min;
+        }
+
+
+        var huDu = time * Math.PI / 180;
+//        cxt.clearRect(0,0,1024,728);
+        drawNotChange(cxt);
+        cxt.save();//将当前以左上角坐标为(0,0)的上下文环境进行保存，这样是为了在接下来中要进行画布偏移后，可以进行还原当前的环境
+        cxt.translate(500,400);
+
+        cxt.rotate(huDu);//设定每次旋转的度数
+
+        var Rotate = function (Source, Angle)//Angle为正时逆时针转动, 单位为弧度
+        {
+            var A, R;
+            A = Math.atan2(Source.Y, Source.X);//atan2自带坐标系识别, 注意X,Y的顺序
+            A += Angle;//旋转
+            R = Math.sqrt(Source.X * Source.X + Source.Y * Source.Y);//半径
+            var newX=Math.cos(A) * R;
+            var newY=Math.sin(A) * R;
+            start.X=newX;
+            start.Y=newY;
+            return {
+                X:newX,
+                Y: newY
+            }
+        };
+        console.log(Rotate(start, huDu));
+        console.log(time);
+        cxt.fillStyle='blue';
+        cxt.beginPath();
+        cxt.arc(0,150,5,0,2*Math.PI,false);
+        cxt.closePath();
+        cxt.fill();
+        cxt.restore();//将当前为(500,400)的点还原为（0,0）,其实在save中就是将上下文环境保存到栈中，在restore下面对其进行还原
+//        time+=1;
+        cxt.fillStyle='#f00';
+        cxt.beginPath();
+        cxt.arc(0,150,5,0,2*Math.PI,false);
+        cxt.closePath();
+        cxt.fill();
+        cxt.restore();
+
+    }
+
+    //绘制不变因素
+    function drawNotChange(context){
+
+        context.beginPath();
+        context.arc(500,400,150,0,2*Math.PI,true);
+        context.closePath();
+        context.stroke();
+    }
+</script>
+</body>
+</html>

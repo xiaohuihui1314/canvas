@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<script>
+    window.onload = function () {
+        function Foo(name) {
+            this.name = name;
+        }
+
+        function Bar(name, label) {
+            Foo.call(this, name);
+            this.name = name;
+            this.label = label;
+        }
+
+        Foo.prototype.myName = function () {
+            console.log(this.name);
+        };
+
+        Bar.prototype = Object.create(Foo.prototype);
+        Bar.prototype.myLabel = function () {
+            console.log(this.label);
+        };
+        var a = new Bar("a", "b");
+        a.myName();
+        a.myLabel();
+        console.log(Bar.prototype.constructor===Foo);//true
+        console.log(Bar.prototype.constructor=Bar);
+        console.log(Bar.prototype.constructor===Foo);//false
+        console.log(a.__proto__ === Bar.prototype);//true
+        console.log(a.__proto__ === Foo.prototype);//false
+        console.log(Bar.prototype.__proto__ === Foo.prototype);//true
+        console.log(Bar.prototype.__proto__ === Object.prototype);//false
+        console.log(a.__proto__.__proto__.__proto__ === Object.prototype);//true;
+        console.log("_________________________________________________________");
+        var A = {
+            a: 100
+        };
+        var b = Object.create(A);
+        console.log(b);
+        console.log(b.__proto__ === A);//true
+        console.log(A.__proto__ === Object.prototype);//true
+
+        console.log("_________________________________________________________");
+        function Foo1(name) {
+            this.xxx = name;
+        }
+        Foo1.prototype.a = 100;
+        var a1 = new Foo1("111");
+        console.log(a1.valueOf());
+        console.log(a1.hasOwnProperty('xxx'));//true
+        console.log(a1.hasOwnProperty('a'));//false
+        console.log(a1.constructor === Foo1);//true
+        console.log(Foo1.prototype.isPrototypeOf(a1));//true.判断一个对象是否存在于另一个对象的原型链中
+    }
+</script>
+</body>
+</html>
